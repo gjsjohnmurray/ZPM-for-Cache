@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Routine name="%zrcc" type="MAC" languagemode="0"><![CDATA[
+%zrcc ; install ZPM
+	zn "%SYS"
+	set $namespace="%SYS", name="DefaultSSL" 
+	do:'##class(Security.SSLConfigs).Exists(name) ##class(Security.SSLConfigs).Create(name) 
+	set url="https://pm.community.intersystems.com/packages/zpm/latest/installer" 
+	Do ##class(%Net.URLParser).Parse(url,.comp) 
+	set ht = ##class(%Net.HttpRequest).%New()
+	s ht.Server = comp("host"), ht.Port = 443, ht.Https=1
+	s ht.SSLConfiguration=name, st=ht.Get(comp("path")) 
+	if 'st do $System.Status.GetErrorText(st) b   quit
+	set xml=##class(%File).TempFilename("xml")
+	s tFile = ##class(%Stream.FileBinary).%New()
+	s tFile.Filename = xml 
+	do tFile.CopyFromAndSave(ht.HttpResponse.Data) 
+	do ht.%Close()
+	set $ZT="done"
+	do xml(xml)
+	do $system.OBJ.Load(xml,"ck") 
+done
+	if %objlasterror,6301-$system.Status.GetErrorCodes(%objlasterror) {
+		do $system.OBJ.DisplayError() }
+	else {
+		write !,"IGNORE previous Error Messages",
+			!,"caused by a bad module.xml file in ZPM repo",
+			!!,"All done, ready for use",!
+			}		
+	do ##class(%File).Delete(xml)
+	quit
+	
+xml(path) ; fix xml version
+	set iris="<Export generator=""IRIS"""
+	set cache="<Export generator=""Cache"" version=""25"">"
+	set save=path_".tmp"
+	set from=##class(%File).%New(path)
+	do from.Rename(path,save)
+	set from.Name=save
+	set to=##class(%File).%New(path)
+	do from.Open("R"),to.Open("WNS")	
+	for i=1:1 {
+		set lin=from.Read()
+		if lin[iris set lin=cache
+		do to.WriteLine(lin)
+		quit:from.AtEnd	
+		}
+	do from.Close(),to.Close()
+	quit
+	
+prepare(xml)
+	zn "%SYS"
+	set syslib=$system.Util.ManagerDirectory()_"cachelib"
+	set db=##class(SYS.Database).%OpenId(syslib)
+	set db.ReadOnly=0
+	set sc=db.%Save()
+	if 'sc do $system.OBJ.DispalyError() quit
+	do $system.OBJ.Load(xml,"ck")
+	set db.ReadOnly=1
+	set sc=db.%Save()
+	if 'sc do $system.OBJ.DispalyError() quit
+	write !,"Ready for ZPM installation",!
+	quit
+		
+]]></Routine>
+</Export>
