@@ -8,7 +8,7 @@ git https://github.com/isc-at/ZPM-for-Cache.git
 ```
 There is no docker and no automatic installation   
 So some typing is required   
-The installation rus in 2 phases   
+The installation runs in 2 phases   
 - adding sone system settings   
 - installing ZPM as on IRIS   
 
