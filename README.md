@@ -73,9 +73,9 @@ zpm:%SYS>search
 ```
 
 And now you may use ZPM on Caché   
-This is not tested in detail and just a prototype.
-Issues and Pull Requsts ae welcome
+This is not tested in detail and just a prototype.   
+Issues and Pull Requests are welcome   
 
-I was waiting long to see this but now I decided
+I was waiting long to see this but now I decided   
 to make a 2022 birthday gift to myself. 
  
