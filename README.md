@@ -68,10 +68,12 @@ All done, ready for use
 || Welcome to the Package Manager Shell (ZPM).                             ||
 || Enter q/quit to exit the shell. Enter ?/help to view available commands ||
 =============================================================================
-zpm:%SYS>search
+zpm:%SYS>version
+ 
+https://pm.community.intersystems.com - 1.0.6
+zpm:%SYS>
 
 ```
-
 And now you may use ZPM on Caché   
 This is not tested in detail and just a prototype.   
 Issues and Pull Requests are welcome   
